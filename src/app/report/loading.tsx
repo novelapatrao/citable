@@ -47,7 +47,7 @@ export default function Loading() {
           <span className="text-accent">an AI would.</span>
         </h2>
         <p className="mt-5 max-w-xl text-muted">
-          Takes about 30 seconds. Running 7 AEO checks plus a Claude
+          Takes about a minute. Running 7 AEO checks plus a Claude
           analysis tuned to your site.
         </p>
 

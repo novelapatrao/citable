@@ -116,7 +116,7 @@ export default function Home() {
             transition={{ duration: 0.5, delay: 2.2 }}
             className="mt-4 text-xs text-muted-2"
           >
-            Free · No signup · ~20 seconds
+            Free · No signup · Under a minute
           </motion.p>
         </section>
 
@@ -138,7 +138,7 @@ export default function Home() {
               label: "more AI citations when structured data is present",
             },
             {
-              n: "<20s",
+              n: "<60s",
               label: "to scan your full site and get real fixes",
             },
           ].map((s, i) => (
@@ -259,7 +259,7 @@ export default function Home() {
             <span className="text-accent">getting cited.</span>
           </h2>
           <p className="mt-4 max-w-xl text-muted">
-            It&apos;s free. No signup. Takes twenty seconds.
+            It&apos;s free. No signup. Done in under a minute.
           </p>
           <form
             onSubmit={handleSubmit}
