@@ -288,7 +288,10 @@ function ReportBody({ result }: { result: ScanResult }) {
           with your team or use it to pitch a client.
         </p>
         <div className="mt-6 flex justify-center">
-          <EmailGatePdf fileName={`citable-${hostname}`} />
+          <EmailGatePdf
+            targetSelector="#report-content"
+            fileName={`citable-${hostname}`}
+          />
         </div>
       </section>
 
