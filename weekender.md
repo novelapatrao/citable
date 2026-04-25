@@ -24,22 +24,27 @@ primary first user: _______________________
 - ✅ deployed to vercel
 - ✅ email-gated PDF download (Google Form + html-to-image + jsPDF)
 - ✅ vercel analytics + OG image for share previews
-- ☐ shared on linkedin
-- ☐ first 10 scans run
+- ☐ shared on linkedin (deferred to post-weekend GTM)
+- ☐ first 10 scans run by external users
 
 ## live url
 **https://citable-novelapatraos-projects.vercel.app**
 
 repo: https://github.com/novelapatrao/citable
 
-## metrics (virality track)
-| metric | target by 8pm | actual |
-|---|---|---|
-| scans run | 50 | _ |
-| linkedin post impressions | 1000 | _ |
-| linkedin reactions | 20 | _ |
-| people who shared | 5 | _ |
-| competitor sites scanned (proxy for serious use) | 10 | _ |
+## metrics (virality track) — final, sat 8pm cutoff
+| metric | target | actual | source |
+|---|---|---|---|
+| visitors | 50 | 6 | Vercel Analytics |
+| page views | — | 12 | Vercel Analytics |
+| bounce rate | < 60% | 50% | Vercel Analytics |
+| linkedin impressions | 1,000 | 0 (post not made) | — |
+| linkedin reactions | 20 | 0 | — |
+| amplification (notable reshares) | 1 | 0 | — |
+| signups / emails captured | 25 | 0 external (test only) | Google Form |
+| competitor sites scanned | 10 | 0 external | Vercel logs |
+
+**Vercel rubric self-score (Virality): 0 / 164 base.** Build shipped, distribution didn't. GTM moved to post-weekend.
 
 ## daily log
 
@@ -51,9 +56,13 @@ repo: https://github.com/novelapatrao/citable
 - 14:30 — built email-gated PDF download (real one-click, no print dialog)
 - 15:00 — fixed Google Form (had to publish it explicitly)
 - 15:30 — added Vercel Analytics + OG image for LinkedIn share preview
-- _____ — linkedin post live
-- _____ — first scan run by someone other than me
-- _____ — submitted
+- 15:45 — drafted LinkedIn post + WhatsApp DM templates
+- _____ — linkedin post not made; deferred GTM to post-weekend
+
+### sun 2026-04-26
+- 03:20 — checked Vercel Analytics: 6 visitors, 12 page views, 50% bounce
+- 03:30 — assembled submission package (`submission.md`)
+- _____ — submitted to GrowthX
 
 ### fri 2026-04-24
 - built core scanner (7 rule-based checks)
