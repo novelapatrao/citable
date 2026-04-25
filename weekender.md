@@ -21,12 +21,14 @@ primary first user: _______________________
 - ✅ landing page live
 - ✅ scanner working end-to-end (rule-based + claude analysis)
 - ✅ pushed to github
-- ☐ deployed to vercel
+- ✅ deployed to vercel
+- ✅ email-gated PDF download (Google Form + html-to-image + jsPDF)
+- ✅ vercel analytics + OG image for share previews
 - ☐ shared on linkedin
 - ☐ first 10 scans run
 
 ## live url
-*(paste here once vercel finishes deploying)*
+**https://citable-novelapatraos-projects.vercel.app**
 
 repo: https://github.com/novelapatrao/citable
 
@@ -42,8 +44,13 @@ repo: https://github.com/novelapatrao/citable
 ## daily log
 
 ### sat 2026-04-25
-- 12:30 — installed handbook, picked up where i left off yesterday
-- _____ — vercel deploy done, live url:
+- 12:30 — installed growthx handbook, picked up where i left off yesterday
+- 13:00 — brand renamed to CITABLE.Ai, plain-english summary block added to report
+- 13:30 — speed tuning (sonnet 4-6 medium, no adaptive thinking, ~50s per scan)
+- 14:00 — pushed to github (novelapatrao/citable), deployed to vercel
+- 14:30 — built email-gated PDF download (real one-click, no print dialog)
+- 15:00 — fixed Google Form (had to publish it explicitly)
+- 15:30 — added Vercel Analytics + OG image for LinkedIn share preview
 - _____ — linkedin post live
 - _____ — first scan run by someone other than me
 - _____ — submitted
