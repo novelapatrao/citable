@@ -36,7 +36,7 @@ export default function Loading() {
 
       {/* nav */}
       <header className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-6">
-        <span className="text-base font-semibold tracking-tight">Citable</span>
+        <span className="text-base font-semibold tracking-tight">CITABLE.Ai</span>
         <div className="hidden text-xs text-muted-2 sm:block">Analysing…</div>
       </header>
 

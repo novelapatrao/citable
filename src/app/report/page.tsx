@@ -66,7 +66,7 @@ function Nav() {
   return (
     <header className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-6">
       <Link href="/" className="text-base font-semibold tracking-tight">
-        Citable
+        CITABLE.Ai
       </Link>
       <Link
         href="/"
@@ -83,7 +83,7 @@ function Footer() {
   return (
     <footer className="mx-auto w-full max-w-5xl px-6 py-8 text-xs text-muted-2">
       <div className="flex flex-col items-center justify-between gap-2 border-t border-border pt-6 sm:flex-row">
-        <span>© {new Date().getFullYear()} Citable</span>
+        <span>© {new Date().getFullYear()} CITABLE.Ai</span>
         <span>Built in a weekend.</span>
       </div>
     </footer>
@@ -279,7 +279,7 @@ function ReportBody({ result }: { result: ScanResult }) {
           Scan <span className="text-accent">another site.</span>
         </h3>
         <p className="mt-2 max-w-md text-sm text-muted mx-auto">
-          Curious how a competitor scores? Run them through Citable.
+          Curious how a competitor scores? Run them through CITABLE.Ai.
         </p>
         <Link
           href="/"

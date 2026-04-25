@@ -20,18 +20,18 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
-  title: "Citable — Is your site AI-ready?",
+  title: "CITABLE.Ai — Is your site AI-ready?",
   description:
     "Paste your URL. We analyze your content against 7 AEO criteria and score how well AI engines — ChatGPT, Perplexity, Google AI Overviews — will surface your brand.",
   openGraph: {
-    title: "Citable — Is your site AI-ready?",
+    title: "CITABLE.Ai — Is your site AI-ready?",
     description:
       "Paste your URL. We analyze your content against 7 AEO criteria and score how well AI engines will surface your brand.",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Citable — Is your site AI-ready?",
+    title: "CITABLE.Ai — Is your site AI-ready?",
     description:
       "Paste your URL. Score how well AI engines will surface your brand.",
   },

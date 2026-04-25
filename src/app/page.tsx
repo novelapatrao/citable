@@ -379,7 +379,7 @@ function AccentReveal({
 function Nav() {
   return (
     <header className="relative z-10 mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-6">
-      <span className="text-base font-semibold tracking-tight">Citable</span>
+      <span className="text-base font-semibold tracking-tight">CITABLE.Ai</span>
       <div className="hidden text-xs text-muted-2 sm:block">
         Free while in beta
       </div>
@@ -391,7 +391,7 @@ function Footer() {
   return (
     <footer className="mx-auto w-full max-w-5xl px-6 py-8 text-xs text-muted-2">
       <div className="flex flex-col items-center justify-between gap-2 border-t border-border pt-6 sm:flex-row">
-        <span>© {new Date().getFullYear()} Citable</span>
+        <span>© {new Date().getFullYear()} CITABLE.Ai</span>
         <span>Built in a weekend.</span>
       </div>
     </footer>
