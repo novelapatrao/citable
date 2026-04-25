@@ -122,3 +122,40 @@ body {
 .cursor-blink {
   animation: blink 1s step-end infinite;
 }
+
+/* ————————————————————————————————————————
+ * print / save-as-PDF — keep only the report content
+ * triggered from the email-gated PDF flow on the report page
+ * ———————————————————————————————————————— */
+@media print {
+  /* hide nav, footer, decorative gradients and scan-line */
+  body > div > *:not(main) {
+    display: none !important;
+  }
+
+  /* inside <main>, keep only #report-content (hide CTA sections) */
+  main > *:not(#report-content) {
+    display: none !important;
+  }
+
+  /* hide anything tagged for PDF exclusion (modal, button, etc) */
+  [data-pdf-hide] {
+    display: none !important;
+  }
+
+  /* force browser to render bg + accent colors in the PDF */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* clean up padding for print layout */
+  main {
+    padding: 0 !important;
+  }
+
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+}
