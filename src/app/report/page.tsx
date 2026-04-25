@@ -6,6 +6,7 @@ import {
 } from "@/lib/scan";
 import { noteForCheck, type AiAnalysis } from "@/lib/ai";
 import { CopyButton } from "@/components/copy-button";
+import { EmailGatePdf } from "@/components/email-gate-pdf";
 import { ArrowRight, AlertCircle } from "lucide-react";
 import Link from "next/link";
 
@@ -143,6 +144,7 @@ function ReportBody({ result }: { result: ScanResult }) {
 
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 px-6 pt-4 pb-16">
+      <div id="report-content">
       {/* HEADER CARD: score + verdict */}
       <section className="rounded-2xl border border-border-2 bg-surface p-6 sm:p-8">
         <div className="label-mono text-accent">◉ aeo score</div>
@@ -273,8 +275,28 @@ function ReportBody({ result }: { result: ScanResult }) {
         <GeneratedFaq ai={ai} />
       )}
 
+      </div>{/* /#report-content */}
+
+      {/* PDF CTA — email-gated download */}
+      <section className="mt-14 rounded-2xl border border-accent/30 bg-accent/[0.04] p-8 sm:p-10 text-center">
+        <h3 className="font-serif text-3xl font-normal tracking-tight sm:text-4xl">
+          Take this report{" "}
+          <span className="text-accent">with you.</span>
+        </h3>
+        <p className="mx-auto mt-3 max-w-md text-sm text-muted">
+          Drop your email. We&apos;ll save the full report as a PDF — share it
+          with your team or use it to pitch a client.
+        </p>
+        <div className="mt-6 flex justify-center">
+          <EmailGatePdf
+            targetSelector="#report-content"
+            fileName={`citable-${hostname}.pdf`}
+          />
+        </div>
+      </section>
+
       {/* CTA */}
-      <section className="mt-16 rounded-2xl border border-border-2 bg-surface p-8 text-center">
+      <section className="mt-10 rounded-2xl border border-border-2 bg-surface p-8 text-center">
         <h3 className="font-serif text-3xl font-normal tracking-tight">
           Scan <span className="text-accent">another site.</span>
         </h3>
