@@ -68,7 +68,7 @@ export default async function OpenGraphImage() {
               display: "flex",
             }}
           >
-            ◉ free aeo scanner
+            free aeo scanner
           </div>
           <div
             style={{

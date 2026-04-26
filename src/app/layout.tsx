@@ -20,7 +20,14 @@ const fraunces = Fraunces({
   axes: ["SOFT", "opsz"],
 });
 
+const SITE_URL = process.env.VERCEL_PROJECT_PRODUCTION_URL
+  ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+  : process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : "http://localhost:3000";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "CITABLE.Ai — Is your site AI-ready?",
   description:
     "Paste your URL. We analyze your content against 7 AEO criteria and score how well AI engines — ChatGPT, Perplexity, Google AI Overviews — will surface your brand.",

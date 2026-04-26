@@ -657,8 +657,14 @@ function checkFaq($: cheerio.CheerioAPI, html: string): CheckResult {
 
 // ————————————————————————————————————————
 // Main entry point
+//
+// Pass `{ aiOff: true }` to skip the Claude call — used by the OG image route
+// where we need a fast deterministic score within LinkedIn's ~5s fetch budget.
 // ————————————————————————————————————————
-export async function scanSite(rawUrl: string): Promise<ScanResult> {
+export async function scanSite(
+  rawUrl: string,
+  opts: { aiOff?: boolean } = {},
+): Promise<ScanResult> {
   const normalizedUrl = normalizeUrl(rawUrl);
   const now = new Date().toISOString();
 
@@ -748,12 +754,14 @@ export async function scanSite(rawUrl: string): Promise<ScanResult> {
     .map((c) => c.id);
 
   const hostname = new URL(normalizedUrl).hostname;
-  const aiAnalysis = await analyzeSiteWithClaude({
-    url: normalizedUrl,
-    hostname,
-    html,
-    checks,
-  });
+  const aiAnalysis = opts.aiOff
+    ? null
+    : await analyzeSiteWithClaude({
+        url: normalizedUrl,
+        hostname,
+        html,
+        checks,
+      });
 
   return {
     url: rawUrl,

@@ -9,10 +9,30 @@ import { CopyButton } from "@/components/copy-button";
 import { EmailGatePdf } from "@/components/email-gate-pdf";
 import { ArrowRight, AlertCircle } from "lucide-react";
 import Link from "next/link";
+import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
 
 type SearchParams = Promise<{ url?: string }>;
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}): Promise<Metadata> {
+  const { url } = await searchParams;
+  if (!url) return {};
+  const ogUrl = `/api/og/report?url=${encodeURIComponent(url)}`;
+  return {
+    openGraph: {
+      images: [{ url: ogUrl, width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      images: [ogUrl],
+    },
+  };
+}
 
 const FALLBACK_VERDICTS: Record<ScanLabel, string> = {
   Invisible:
