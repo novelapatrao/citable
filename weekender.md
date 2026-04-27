@@ -64,6 +64,14 @@ repo: https://github.com/novelapatrao/citable
 - 03:30 — assembled submission package (`submission.md`)
 - _____ — submitted to GrowthX
 
+### mon 2026-04-27
+post-submission polish pass, three changes shipped via parallel build + parallel review subagents:
+- **SSRF guard** in `lib/scan.ts` — blocks localhost / RFC1918 / 169.254 (incl. AWS IMDS) / IPv6 link-local / ULA / loopback / non-http(s) schemes. Manual redirect handling re-validates every hop (closes the obvious "evil.com → 169.254.169.254" bypass). 39-case adversarial test passes.
+- **Share bar** on the report page — LinkedIn / X / copy-link, pre-filled with score and label. Tagged `data-pdf-hide` so the buttons don't render in the downloadable PDF.
+- **Model swap** sonnet 4-6 → haiku 4-5 in `lib/ai.ts` (~3x speedup goal). Had to also drop the `effort: "medium"` parameter — Haiku 4.5 doesn't support it; would have errored every scan.
+
+review pass caught two real prod-breakers the build pass missed: the `effort` param incompatibility, and Node 24 keeping `[brackets]` on IPv6 hostnames (silently breaking every IPv6 string check).
+
 ### fri 2026-04-24
 - built core scanner (7 rule-based checks)
 - integrated claude analysis with structured output

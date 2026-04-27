@@ -80,19 +80,30 @@ async function fetchWithTimeout(
   url: string,
   init?: RequestInit,
 ): Promise<Response> {
+  const MAX_REDIRECTS = 5;
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
   try {
-    return await fetch(url, {
-      ...init,
-      signal: controller.signal,
-      headers: {
-        "User-Agent": USER_AGENT,
-        Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-        ...init?.headers,
-      },
-      redirect: "follow",
-    });
+    let currentUrl = url;
+    for (let hop = 0; ; hop++) {
+      // Re-validate every hop — defends against Location: redirects to
+      // internal addresses (e.g. evil.com → 169.254.169.254).
+      assertSafeUrl(new URL(currentUrl));
+      const res = await fetch(currentUrl, {
+        ...init,
+        signal: controller.signal,
+        headers: {
+          "User-Agent": USER_AGENT,
+          Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          ...init?.headers,
+        },
+        redirect: "manual",
+      });
+      const loc = res.headers.get("location");
+      if (res.status < 300 || res.status >= 400 || !loc) return res;
+      if (hop >= MAX_REDIRECTS) throw new Error("too-many-redirects");
+      currentUrl = new URL(loc, currentUrl).toString();
+    }
   } finally {
     clearTimeout(timeout);
   }
@@ -102,6 +113,77 @@ function normalizeUrl(raw: string): string {
   let url = raw.trim();
   if (!/^https?:\/\//i.test(url)) url = "https://" + url;
   return url;
+}
+
+// SSRF guard. Rejects literal-IP and well-known-name attacks against internal
+// infra (loopback, RFC1918, link-local incl. cloud metadata, ULA, etc.).
+// Note: DNS rebinding and public hostnames that A-record to private IPs
+// (localtest.me, *.nip.io) are out of scope — closing those needs DNS
+// resolution at validation time and fetch-by-IP.
+function assertSafeUrl(parsed: URL): void {
+  const proto = parsed.protocol.toLowerCase();
+  if (proto !== "http:" && proto !== "https:") {
+    throw new Error("unsafe-url");
+  }
+
+  let host = parsed.hostname.toLowerCase();
+  if (!host) throw new Error("unsafe-url");
+
+  // Strip trailing FQDN dot — DNS resolves "localhost." the same as "localhost".
+  if (host.endsWith(".") && host.length > 1) host = host.slice(0, -1);
+
+  // Node keeps brackets on IPv6 hostnames (e.g. "[::1]") — strip them so the
+  // string checks below actually fire.
+  if (host.startsWith("[") && host.endsWith("]")) {
+    host = host.slice(1, -1);
+  }
+
+  if (host === "localhost") throw new Error("unsafe-url");
+  if (host.endsWith(".local")) throw new Error("unsafe-url");
+  if (host.endsWith(".localhost")) throw new Error("unsafe-url");
+
+  // IPv6 literals — ":" can't appear in DNS hostnames.
+  if (host.includes(":")) {
+    // Block any "::" prefix — covers ::, ::1, ::ffff:* (IPv4-mapped) and
+    // ::w.x.y.z (IPv4-compatible, e.g. "::127.0.0.1" → "::7f00:1"). All of
+    // ::/96 is reserved; nothing public lives there.
+    if (host.startsWith("::")) throw new Error("unsafe-url");
+    // fc00::/7 — unique local
+    if (host.startsWith("fc") || host.startsWith("fd")) {
+      throw new Error("unsafe-url");
+    }
+    // fe80::/10 — link-local. fe80–febf, so the second hex digit is 8–b.
+    if (
+      host.startsWith("fe8") ||
+      host.startsWith("fe9") ||
+      host.startsWith("fea") ||
+      host.startsWith("feb")
+    ) {
+      throw new Error("unsafe-url");
+    }
+    return;
+  }
+
+  // IPv4 dotted-quad. Node's WHATWG URL parser canonicalizes other numeric
+  // forms (2130706433, 0x7f000001, 0177.0.0.1, 127.1) to dotted-quad before
+  // we see them, so a single regex check is sufficient.
+  const v4 = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(host);
+  if (v4) {
+    const a = Number(v4[1]);
+    const b = Number(v4[2]);
+    const c = Number(v4[3]);
+    const d = Number(v4[4]);
+    for (const o of [a, b, c, d]) {
+      if (o < 0 || o > 255) throw new Error("unsafe-url");
+    }
+    if (a === 0) throw new Error("unsafe-url");
+    if (a === 10) throw new Error("unsafe-url");
+    if (a === 127) throw new Error("unsafe-url");
+    if (a === 169 && b === 254) throw new Error("unsafe-url");
+    if (a === 172 && b >= 16 && b <= 31) throw new Error("unsafe-url");
+    if (a === 192 && b === 168) throw new Error("unsafe-url");
+    if (a === 100 && b >= 64 && b <= 127) throw new Error("unsafe-url");
+  }
 }
 
 function labelFor(score: number): ScanLabel {
@@ -670,8 +752,11 @@ export async function scanSite(
 
   let origin: string;
   try {
-    origin = new URL(normalizedUrl).origin;
-  } catch {
+    const parsed = new URL(normalizedUrl);
+    assertSafeUrl(parsed);
+    origin = parsed.origin;
+  } catch (e) {
+    const isUnsafe = e instanceof Error && e.message === "unsafe-url";
     return {
       url: rawUrl,
       normalizedUrl,
@@ -680,7 +765,9 @@ export async function scanSite(
       label: "Invisible",
       checks: [],
       topFixIds: [],
-      error: "That doesn't look like a valid URL. Try something like example.com.",
+      error: isUnsafe
+        ? "That URL looks like an internal address. Try a public website."
+        : "That doesn't look like a valid URL. Try something like example.com.",
     };
   }
 

@@ -4,7 +4,7 @@ import { z } from "zod";
 import * as cheerio from "cheerio";
 import type { CheckResult } from "./scan";
 
-const MODEL = "claude-sonnet-4-6";
+const MODEL = "claude-haiku-4-5";
 const MAX_HTML_CHARS = 15_000;
 
 // ————————————————————————————————————————
@@ -184,7 +184,6 @@ Produce the structured analysis now.`;
       model: MODEL,
       max_tokens: 16_000,
       output_config: {
-        effort: "medium",
         format: zodOutputFormat(aiAnalysisSchema),
       },
       system: [

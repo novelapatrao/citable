@@ -7,6 +7,7 @@ import {
 import { noteForCheck, type AiAnalysis } from "@/lib/ai";
 import { CopyButton } from "@/components/copy-button";
 import { EmailGatePdf } from "@/components/email-gate-pdf";
+import { ShareBar } from "@/components/share-bar";
 import { ArrowRight, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
@@ -75,7 +76,7 @@ export default async function ReportPage({
       {result.error ? (
         <ErrorView error={result.error} rawUrl={url} />
       ) : (
-        <ReportBody result={result} />
+        <ReportBody result={result} rawUrl={url} />
       )}
 
       <Footer />
@@ -153,7 +154,7 @@ function ErrorView({ error, rawUrl }: { error: string; rawUrl: string }) {
   );
 }
 
-function ReportBody({ result }: { result: ScanResult }) {
+function ReportBody({ result, rawUrl }: { result: ScanResult; rawUrl: string }) {
   const topFixes = result.topFixIds
     .map((id) => result.checks.find((c) => c.id === id))
     .filter(Boolean) as CheckResult[];
@@ -161,6 +162,7 @@ function ReportBody({ result }: { result: ScanResult }) {
   const hostname = safeHostname(result.normalizedUrl);
   const labelColor = LABEL_COLOR[result.label];
   const ai = result.aiAnalysis;
+  const reportPath = `/report?url=${encodeURIComponent(rawUrl)}`;
 
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 px-6 pt-4 pb-16">
@@ -207,6 +209,22 @@ function ReportBody({ result }: { result: ScanResult }) {
               </p>
             )}
           </div>
+        </div>
+      </section>
+
+      {/* SHARE BAR — capture the "wow my score" moment.
+          data-pdf-hide keeps these inert buttons out of the downloadable PDF. */}
+      <section data-pdf-hide className="mt-6">
+        <div className="label-mono text-accent">◉ share your score</div>
+        <p className="mt-2 text-sm text-muted">
+          Send this report to a peer. They&apos;ll want to know theirs.
+        </p>
+        <div className="mt-4">
+          <ShareBar
+            score={result.score}
+            label={result.label}
+            reportPath={reportPath}
+          />
         </div>
       </section>
 
@@ -315,19 +333,20 @@ function ReportBody({ result }: { result: ScanResult }) {
         </div>
       </section>
 
-      {/* CTA */}
+      {/* CTA — competitor scan framing */}
       <section className="mt-10 rounded-2xl border border-border-2 bg-surface p-8 text-center">
         <h3 className="font-serif text-3xl font-normal tracking-tight">
-          Scan <span className="text-accent">another site.</span>
+          Scan a <span className="text-accent">competitor.</span>
         </h3>
         <p className="mt-2 max-w-md text-sm text-muted mx-auto">
-          Curious how a competitor scores? Run them through CITABLE.Ai.
+          Run a competitor&apos;s site through CITABLE.Ai and see exactly where
+          they&apos;re winning AI visibility — and where you can overtake them.
         </p>
         <Link
           href="/"
           className="mt-5 inline-flex items-center gap-2 rounded-lg border border-accent-deep bg-accent-deep px-5 py-3 text-sm font-semibold uppercase tracking-widest text-accent transition-colors hover:bg-accent hover:text-black"
         >
-          <span className="label-mono">New scan</span>
+          <span className="label-mono">Scan a competitor</span>
           <ArrowRight className="h-4 w-4" />
         </Link>
       </section>
