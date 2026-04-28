@@ -1,38 +1,29 @@
 "use client";
 
 import { Check, Link2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 type ShareBarProps = {
   score: number;
   label: string;
-  reportPath: string;
+  shareUrl: string;
 };
 
-export function ShareBar({ score, label, reportPath }: ShareBarProps) {
-  // Start with the relative path so SSR + first client render match.
-  // After mount, swap in the absolute URL so social sites can fetch the OG card.
-  const [absoluteUrl, setAbsoluteUrl] = useState<string>(reportPath);
+export function ShareBar({ score, label, shareUrl }: ShareBarProps) {
   const [copied, setCopied] = useState(false);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setAbsoluteUrl(window.location.origin + reportPath);
-    }
-  }, [reportPath]);
 
   const tweetText = `My site scored ${score}/100 on CITABLE.Ai — that's "${label}" for ChatGPT, Claude & Perplexity. What's yours?`;
 
   const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
-    absoluteUrl,
+    shareUrl,
   )}`;
   const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
     tweetText,
-  )}&url=${encodeURIComponent(absoluteUrl)}`;
+  )}&url=${encodeURIComponent(shareUrl)}`;
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(absoluteUrl);
+      await navigator.clipboard.writeText(shareUrl);
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     } catch {

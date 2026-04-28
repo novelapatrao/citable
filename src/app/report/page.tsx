@@ -10,6 +10,7 @@ import { EmailGatePdf } from "@/components/email-gate-pdf";
 import { ShareBar } from "@/components/share-bar";
 import { ArrowRight, AlertCircle } from "lucide-react";
 import Link from "next/link";
+import { headers } from "next/headers";
 import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
@@ -61,6 +62,13 @@ export default async function ReportPage({
   const { url } = await searchParams;
   if (!url) return <MissingUrl />;
 
+  const h = await headers();
+  const host = h.get("x-forwarded-host") ?? h.get("host") ?? "";
+  const proto = h.get("x-forwarded-proto") ?? "https";
+  const shareUrl = host
+    ? `${proto}://${host}/report?url=${encodeURIComponent(url)}`
+    : `/report?url=${encodeURIComponent(url)}`;
+
   const result = await scanSite(url);
 
   return (
@@ -76,7 +84,7 @@ export default async function ReportPage({
       {result.error ? (
         <ErrorView error={result.error} rawUrl={url} />
       ) : (
-        <ReportBody result={result} rawUrl={url} />
+        <ReportBody result={result} shareUrl={shareUrl} />
       )}
 
       <Footer />
@@ -154,7 +162,13 @@ function ErrorView({ error, rawUrl }: { error: string; rawUrl: string }) {
   );
 }
 
-function ReportBody({ result, rawUrl }: { result: ScanResult; rawUrl: string }) {
+function ReportBody({
+  result,
+  shareUrl,
+}: {
+  result: ScanResult;
+  shareUrl: string;
+}) {
   const topFixes = result.topFixIds
     .map((id) => result.checks.find((c) => c.id === id))
     .filter(Boolean) as CheckResult[];
@@ -162,7 +176,6 @@ function ReportBody({ result, rawUrl }: { result: ScanResult; rawUrl: string }) 
   const hostname = safeHostname(result.normalizedUrl);
   const labelColor = LABEL_COLOR[result.label];
   const ai = result.aiAnalysis;
-  const reportPath = `/report?url=${encodeURIComponent(rawUrl)}`;
 
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 px-6 pt-4 pb-16">
@@ -223,7 +236,7 @@ function ReportBody({ result, rawUrl }: { result: ScanResult; rawUrl: string }) 
           <ShareBar
             score={result.score}
             label={result.label}
-            reportPath={reportPath}
+            shareUrl={shareUrl}
           />
         </div>
       </section>
